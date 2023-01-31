@@ -20,7 +20,8 @@
                 position: absolute; width: 50px; height: 50px; box-shadow: inset 0 0 1px rgba(255, 255, 255); box-sizing: border-box;
                 transform: translate(100px, 100px);
             }
-            .img > div.picked{border-radius: 50%;}
+            .img > div.picked:after{content : ''; position: fixed; top: 0; left: 0; right: 0; bottom: 0; border: 3px dashed rgba(0, 0, 0, .8);}
+            .img > div.picked:before{content : ''; position: fixed; top: 3px; left: 3px; right: 3px; bottom: 3px; border: 3px dashed rgba(255, 255, 255, .8);}
 
             .btns{text-align: center;}
             .btns button{color: #fff; padding: 30px; border: 0; outline: 0; font-size: 50px; border-radius: 8px; background: green;}
@@ -83,17 +84,15 @@
                 'https://cdn.pixabay.com/photo/2022/04/24/08/08/park-7153125_960_720.png',
                 'https://cdn.pixabay.com/photo/2020/10/03/06/45/sketch-5622725_960_720.jpg',
                 'https://cdn.pixabay.com/photo/2021/11/22/14/12/christmas-6816610_960_720.jpg',
-                'https://cdn.pixabay.com/photo/2020/01/04/18/40/trees-4741364_960_720.png',
                 'https://cdn.pixabay.com/photo/2019/12/11/18/06/snowman-4688913_960_720.jpg',
-                'https://cdn.pixabay.com/photo/2019/12/22/03/09/wallpaper-4711725_960_720.jpg',
                 'https://cdn.pixabay.com/photo/2019/11/05/00/25/cafe-bar-4602458_960_720.jpg'
             ];
 
-            // imgPath.forEach(function(e){
-            //     const im = document.createElement('img');
-            //     im.src = e;
-            //     document.body.appendChild(im);
-            // })
+            imgPath.forEach(function(e){
+                const im = document.createElement('img');
+                im.src = e;
+                document.body.appendChild(im);
+            })
 
             const puzzle = new Puzzle();
 
@@ -116,6 +115,10 @@
 
                 t.startGame = function(){
 
+                    if(t.preventBtn) return;
+
+                    t.preventBtn = true;
+
                     t.init();
 
                     t.start = new Date().getTime();
@@ -124,6 +127,9 @@
 
                     // const imgSrc = 'https://cdn.pixabay.com/photo/2022/12/18/13/48/skater-7663466_960_720.png';
                     const imgSrc = imgPath[getRandomNum(0, imgPath.length - 1)];
+
+                    img.style.background = 'url(' + imgSrc + ')';
+                    img.style.backgroundSize = '500%';
 
                     myImage.src = imgSrc;
                     myImage.onload = function() {
@@ -144,6 +150,9 @@
                         let isW = true;
         
                         if(imgW < imgH) isW = false;
+
+                        img.style.background = 'url(' + imgSrc + ')';
+                        img.style.backgroundSize = isW ? 'auto 100%' : '100% auto';
         
                         for(let i = 0; i < row; i++){
                             for(let j = 0; j < col; j++){
@@ -167,10 +176,16 @@
         
                         //섞기
                         shuffle(positionArr);
+
+
                         positionArr.forEach(function(pos, idx){
                             img.querySelectorAll('div')[idx].style.transform = `translate(${pos.position})`;
                             img.querySelectorAll('div')[idx].dataset.changeIdx = pos.idx;
                             img.querySelectorAll('div')[idx].dataset.position = pos.position;
+
+                            if(idx == positionArr.length - 1){
+                                t.preventBtn = false;
+                            }
                         })
                     }
 
