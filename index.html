@@ -100,7 +100,9 @@
 
                     const myImage = new Image();
 
-                    myImage.src = 'https://cdn.pixabay.com/photo/2022/12/18/13/48/skater-7663466_960_720.png';
+                    const imgSrc = 'https://cdn.pixabay.com/photo/2022/12/18/13/48/skater-7663466_960_720.png';
+
+                    myImage.src = imgSrc;
                     myImage.onload = function() {
                         const imgW = this.width;
                         const imgH = this.height;
@@ -126,7 +128,7 @@
                                 const divHeight = 50;
 
                                 imgPiece[((i * 5) + j)].style.cssText = `
-                                    background-image: url(https://cdn.pixabay.com/photo/2022/12/18/13/48/skater-7663466_960_720.png);
+                                    background-image: url(${imgSrc});
                                     background-repeat: no-repeat;
                                     background-size: ${isW ? 'auto 500%' : '500% auto'};
                                     background-position: ${(divWidth * -j) - diffWidth}px ${(divHeight * -i) - diffHeight}px;
