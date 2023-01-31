@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8">
+        <title>이미지 퍼즐</title>
+        <link rel="stylesheet" href="assets/css/normalize.css" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no" />
+        
+        <style>
+            header{
+                display: flex; padding: 10px; align-items: center; justify-content: space-between; background: darkgoldenrod; margin-bottom: 10px;
+            }
+            header h1{margin: 0; padding: 0;}
+            header button{border: 0; outline: 0; color: #000; background: gold; width: 60px; padding: 10px;}
+
+            .wrapper{width: 250px; margin: 0 auto;}
+
+            .img{display: flex; flex-wrap: wrap; width: 250px; height: 250px; background: #eee; margin-bottom: 10px;}
+            .img > div{
+                position: absolute; width: 50px; height: 50px; box-shadow: inset 0 0 1px rgba(255, 255, 255); box-sizing: border-box;
+                transform: translate(100px, 100px);
+            }
+            .img > div.picked{border-radius: 50%;}
+
+            .btns{text-align: center;}
+            .btns button{color: #fff; padding: 30px; border: 0; outline: 0; font-size: 50px; border-radius: 8px; background: green;}
+            .rec{text-align: center;}
+
+        </style>
+     </head>
+     <body>
+        <header>
+            <h1>이미지퍼즐</h1>
+            <button onclick="puzzle.startGame();">시작</button>
+        </header>
+        <div class="wrapper">
+            <div id="img" class="img">
+                <div onclick="puzzle.pick(this, 0);"></div>
+                <div onclick="puzzle.pick(this, 1);"></div>
+                <div onclick="puzzle.pick(this, 2);"></div>
+                <div onclick="puzzle.pick(this, 3);"></div>
+                <div onclick="puzzle.pick(this, 4);"></div>
+                <div onclick="puzzle.pick(this, 5);"></div>
+                <div onclick="puzzle.pick(this, 6);"></div>
+                <div onclick="puzzle.pick(this, 7);"></div>
+                <div onclick="puzzle.pick(this, 8);"></div>
+                <div onclick="puzzle.pick(this, 9);"></div>
+                <div onclick="puzzle.pick(this, 10);"></div>
+                <div onclick="puzzle.pick(this, 11);"></div>
+                <div onclick="puzzle.pick(this, 12);"></div>
+                <div onclick="puzzle.pick(this, 13);"></div>
+                <div onclick="puzzle.pick(this, 14);"></div>
+                <div onclick="puzzle.pick(this, 15);"></div>
+                <div onclick="puzzle.pick(this, 16);"></div>
+                <div onclick="puzzle.pick(this, 17);"></div>
+                <div onclick="puzzle.pick(this, 18);"></div>
+                <div onclick="puzzle.pick(this, 19);"></div>
+                <div onclick="puzzle.pick(this, 20);"></div>
+                <div onclick="puzzle.pick(this, 21);"></div>
+                <div onclick="puzzle.pick(this, 22);"></div>
+                <div onclick="puzzle.pick(this, 23);"></div>
+                <div onclick="puzzle.pick(this, 24);"></div>
+            </div>
+
+            <div class="btns">
+                <button onclick="puzzle.submit();">제출</button>
+            </div>
+            <h3 id="rec" class="rec"></h3>
+        </div>
+
+        <script>
+            const img = document.querySelector('#img');
+            const imgPiece = img.querySelectorAll('div');
+            const rec = document.querySelector('#rec');
+
+            const puzzle = new Puzzle();
+
+            function Puzzle(){
+                const t = this;
+
+                t.init = function(){
+                    t.start = 0;
+                    t.end = 0;
+                    t.isFirst = false;
+                    rec.innerText = '';
+                    imgPiece.forEach(function(div){
+                        div.classList.remove('picked');
+                        div.style.transform = 'translate(100px, 100px)';
+                    })
+
+                }
+
+                t.init();
+
+                t.startGame = function(){
+
+                    t.init();
+
+                    t.start = new Date().getTime();
+
+                    const myImage = new Image();
+
+                    myImage.src = 'https://cdn.pixabay.com/photo/2022/12/18/13/48/skater-7663466_960_720.png';
+                    myImage.onload = function() {
+                        const imgW = this.width;
+                        const imgH = this.height;
+        
+                        // const diffWidth = Math.abs((imgW - 250) * 4 / 2);
+                        // const diffHeight = Math.abs((imgH - 250) / 8);
+        
+                        const diffWidth = 0;
+                        const diffHeight = 0;
+        
+                        const row = 5;
+                        const col = 5;
+        
+                        const positionArr = [];
+        
+                        let isW = true;
+        
+                        if(imgW < imgH) isW = false;
+        
+                        for(let i = 0; i < row; i++){
+                            for(let j = 0; j < col; j++){
+                                const divWidth = 50;
+                                const divHeight = 50;
+
+                                imgPiece[((i * 5) + j)].style.cssText = `
+                                    background-image: url(https://cdn.pixabay.com/photo/2022/12/18/13/48/skater-7663466_960_720.png);
+                                    background-repeat: no-repeat;
+                                    background-size: ${isW ? 'auto 500%' : '500% auto'};
+                                    background-position: ${(divWidth * -j) - diffWidth}px ${(divHeight * -i) - diffHeight}px;
+                                    transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+                                `;
+
+                                positionArr.push({
+                                    idx: ((i * 5) + j),
+                                    position: `${j * 50}px, ${i * 50}px`
+                                });
+                            }
+                        }
+        
+                        //섞기
+                        shuffle(positionArr);
+                        positionArr.forEach(function(pos, idx){
+                            img.querySelectorAll('div')[idx].style.transform = `translate(${pos.position})`;
+                            img.querySelectorAll('div')[idx].dataset.changeIdx = pos.idx;
+                            img.querySelectorAll('div')[idx].dataset.position = pos.position;
+                        })
+                    }
+
+                }
+
+                t.pick = function(target, idx){
+                    if(!t.start || t.end){
+                        alert('시작버튼을 누르세요.');
+                        return;
+                    }
+
+                    t.isFirst = !t.isFirst;
+                    if(!target.classList.contains('picked')){
+                        target.classList.add('picked');
+                        if(!t.isFirst){
+                            const picked = img.querySelectorAll('.picked');
+                            const divInfo = [];
+
+                            picked.forEach(function(div){
+                                divInfo.push({
+                                    pos: div.dataset.position,
+                                    idx: div.dataset.changeIdx
+                                });
+                                div.classList.remove('picked');
+                            })
+
+                            picked[0].dataset.position = divInfo[1].pos;
+                            picked[0].dataset.changeIdx = divInfo[1].idx;
+                            picked[0].style.transform = `translate(${divInfo[1].pos})`;
+                            
+                            picked[1].dataset.position = divInfo[0].pos;
+                            picked[1].dataset.changeIdx = divInfo[0].idx;
+                            picked[1].style.transform = `translate(${divInfo[0].pos})`;
+                        }
+                    }else{
+                        target.classList.remove('picked');
+                    }
+                }
+
+
+                t.submit = function(){
+                    if(!t.start || t.end){
+                        alert('시작버튼을 누르세요.');
+                        return;
+                    }
+
+                    t.end = new Date().getTime();
+
+                    let isCorrect = true;
+
+                    for(let i = 0; i < imgPiece.length; i++){
+                        const piece = imgPiece[i];
+                        if(i != piece.dataset.changeIdx){
+                            console.log(i, piece.dataset.changeIdx);
+                            isCorrect = false;
+                            break;
+                        }
+                    }
+
+                    t.result(isCorrect);
+                }
+
+                t.result = function(isCorrect){
+                    rec.innerText = isCorrect ? ((t.end - t.start) / 1000) + '초' : '틀렸습니다.';
+                }
+            }    
+
+            function shuffle(array) {
+                array.sort(() => Math.random() - 0.5);
+            }
+
+        </script>
+     </body>
+</html>
