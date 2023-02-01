@@ -88,11 +88,13 @@
                 'https://cdn.pixabay.com/photo/2019/11/05/00/25/cafe-bar-4602458_960_720.jpg'
             ];
 
-            imgPath.forEach(function(e){
-                const im = document.createElement('img');
-                im.src = e;
-                document.body.appendChild(im);
-            })
+
+            //테스트용
+            // imgPath.forEach(function(e){
+            //     const im = document.createElement('img');
+            //     im.src = e;
+            //     document.body.appendChild(im);
+            // })
 
             const puzzle = new Puzzle();
 
@@ -176,7 +178,6 @@
         
                         //섞기
                         shuffle(positionArr);
-
 
                         positionArr.forEach(function(pos, idx){
                             img.querySelectorAll('div')[idx].style.transform = `translate(${pos.position})`;
